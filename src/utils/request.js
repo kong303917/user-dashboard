@@ -22,9 +22,25 @@ function checkStatus(response) {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, options) {
-  return fetch(url, options)
-    .then(checkStatus)
-    .then(parseJSON)
-    .then(data => ({ data }))
-    .catch(err => ({ err }));
+  // return fetch(url, options)
+  //   .then(checkStatus)
+  //   .then(parseJSON)
+  //   .then(data => ({ data }))
+  //   .catch(err => ({ err }));
+  const response = await fetch(url, options);
+
+  checkStatus(response);
+
+  const data = await response.json();
+
+  const ret = {
+    data,
+    headers: {},
+  };
+
+  if (response.headers.get('x-total-count')) {
+    ret.headers['x-total-count'] = response.headers.get('x-total-count');
+  }
+
+  return ret;
 }
